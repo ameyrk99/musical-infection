@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Musical Infection</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/cosmo/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <style>
+      #upload-area {
+        cursor: pointer;
+        border-style: dashed !important;
+        transition: border-color 0.15s;
+      }
+      #upload-area.drag-over {
+        border-color: var(--bs-emphasis-color) !important;
+      }
+      canvas {
+        display: block;
+        width: 100% !important;
+        height: auto !important;
+      }
+    </style>
+  </head>
+  <body class="py-4">
+    <div class="container-fluid px-4">
+      <div class="row g-4">
+        <div class="col-6 d-flex flex-column gap-3">
+          <h4 class="font-monospace text-uppercase text-secondary">
+            Musical Infection
+          </h4>
+
+          <div class="btn-group w-100" role="group">
+            <input
+              type="radio"
+              class="btn-check"
+              name="source"
+              id="src-upload"
+              value="upload"
+              checked
+            />
+            <label class="btn btn-outline-secondary btn-sm" for="src-upload">
+              <i class="bi bi-upload me-1"></i>Upload
+            </label>
+            <input
+              type="radio"
+              class="btn-check"
+              name="source"
+              id="src-mic"
+              value="mic"
+            />
+            <label class="btn btn-outline-secondary btn-sm" for="src-mic">
+              <i class="bi bi-mic me-1"></i>Mic
+            </label>
+          </div>
+
+          <div
+            id="upload-area"
+            class="border border-secondary rounded p-3 text-center"
+          >
+            <p class="font-monospace small text-secondary mb-1">
+              drop a file here<br />or click to browse
+            </p>
+            <p id="file-name" class="font-monospace small mb-0 text-body"></p>
+          </div>
+          <input type="file" id="file-input" accept="audio/*" class="d-none" />
+
+          <div class="d-flex align-items-center gap-2">
+            <label
+              for="bpm-input"
+              class="form-label font-monospace small text-secondary mb-0"
+              >BPM</label
+            >
+            <input
+              type="number"
+              id="bpm-input"
+              value="126"
+              min="40"
+              max="300"
+              class="form-control form-control-sm font-monospace"
+              style="width: 76px"
+            />
+          </div>
+
+          <span id="hint" class="font-monospace small text-secondary">
+            select a file, then click the canvas to start
+          </span>
+
+          <button
+            id="reset-btn"
+            class="btn btn-outline-secondary btn-sm w-100"
+            disabled
+          >
+            <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+          </button>
+
+          <div
+            class="mt-auto pt-3 font-monospace small text-secondary d-flex flex-column gap-1"
+          >
+            <a
+              href="https://p5js.org"
+              target="_blank"
+              rel="noopener"
+              class="text-secondary text-decoration-none"
+            >
+              <i class="bi bi-box-arrow-up-right me-1"></i>Made with p5.js
+            </a>
+            <a
+              href="https://github.com/ameyrk99/musical-infection"
+              target="_blank"
+              rel="noopener"
+              class="text-secondary text-decoration-none"
+            >
+              <i class="bi bi-github me-1"></i>musical-infection
+            </a>
+          </div>
+        </div>
+
+        <div class="col-6" id="canvas-container"></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/addons/p5.sound.min.js"></script>
+    <script src="infection.js"></script>
+  </body>
+</html>
