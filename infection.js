@@ -9,12 +9,14 @@ let audioURL = null;
 let sourceMode = "upload";
 
 function idleHint() {
-  hintEl.textContent =
-    sourceMode === "mic"
+  hintEl.classList.remove("text-danger");
+  if (sourceMode === "mic" || sourceMode === "system") {
+    hintEl.textContent = "click the canvas to start";
+  } else {
+    hintEl.textContent = audioURL
       ? "click the canvas to start"
-      : audioURL
-        ? "click the canvas to start"
-        : "select a file, then click the canvas to start";
+      : "select a file, then click the canvas to start";
+  }
 }
 
 document.querySelectorAll('input[name="source"]').forEach((radio) => {
@@ -79,6 +81,7 @@ let cols,
   fft,
   sound,
   mic,
+  systemStream = null,
   started = false;
 
 function resetSketch() {
@@ -89,6 +92,10 @@ function resetSketch() {
   if (mic) {
     mic.stop();
     mic = null;
+  }
+  if (systemStream) {
+    systemStream.getTracks().forEach((t) => t.stop());
+    systemStream = null;
   }
   started = false;
   resetBtn.disabled = true;
@@ -107,7 +114,7 @@ new p5(function (p) {
     p.textFont("monospace");
   };
 
-  p.mousePressed = function () {
+  p.mousePressed = async function () {
     if (started) return;
 
     if (sourceMode === "upload" && !audioURL) {
@@ -128,6 +135,23 @@ new p5(function (p) {
       fft.setInput(mic);
       lastBeat = p.millis();
       started = true;
+    } else if (sourceMode === "system") {
+      try {
+        systemStream = await navigator.mediaDevices.getDisplayMedia({
+          audio: true,
+          video: false,
+        });
+        const audioCtx = p.getAudioContext();
+        const source = audioCtx.createMediaStreamSource(systemStream);
+        fft = new p5.FFT(0.2, 1024);
+        source.connect(fft.analyser);
+        lastBeat = p.millis();
+        started = true;
+      } catch {
+        hintEl.textContent = "capture cancelled or not supported on this browser/OS";
+        hintEl.classList.add("text-danger");
+        resetBtn.disabled = true;
+      }
     } else {
       sound = p.loadSound(audioURL, () => {
         sound.loop();
@@ -144,7 +168,7 @@ new p5(function (p) {
     if (!started) {
       p.fill(150);
       p.text(
-        sourceMode === "mic" || audioURL ? "[ start ]" : "[ upload a file ]",
+        sourceMode !== "upload" || audioURL ? "[ start ]" : "[ upload a file ]",
         p.width / 2,
         p.height / 2,
       );
